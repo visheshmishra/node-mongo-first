@@ -1,13 +1,19 @@
 const expect = require('expect')
 const request = require('supertest')
-
 const app = require('./../server')
 const Todo = require('./../models/todo')
 const user = require('./../models/user')
 
+const ObjectID = require('mongodb')
+
 const todoarr = [
-    {text:"first chunk"},
-    {text:"second chunk"}
+    {
+        _id: new ObjectID.ObjectId(),
+        text:"first chunk "
+    },{
+        _id: new ObjectID.ObjectId(),
+        text:"second chunk"
+    }
 ];
 
 beforeEach((done) =>{
@@ -78,6 +84,34 @@ describe('GET/todos',() =>{
             console.log(res.body.todos);
             expect(res.body.todos.length).toBe(2)
         })
+        .end(done)
+    })
+})
+describe('GET/todos:id' ,() =>{
+    it('should return todo doc',(done) =>{
+        request('http://localhost:3000')
+        .get(`/todos/${todoarr[0]._id.toHexString()}`)
+        .expect(200)
+        .expect((res) =>{
+            expect(res.body.todo.text).toBe(todoarr[0].text)
+        })
+
+        .end(done)
+    })
+
+    it('should return 404 if todo not found', (done) =>{
+        var hexId = new ObjectID();
+        request('http://localhost:3000')
+        .get(`/todos/${hexId}`)
+        .expect(404)
+
+        .end(done)
+    })
+
+    it('should return 404 if wrong url', (done) =>{
+        request('http://localhost:3000')
+        .get('/todos/123')
+        .expect(404)
         .end(done)
     })
 })
