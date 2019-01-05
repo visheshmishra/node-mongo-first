@@ -2,7 +2,7 @@ var  ObjectID = require('mongodb');
 const {mongoose}  = require('../server/db/mongoose')
 const {todos}  = require('../server/models/todo')
 const {User} = require('../server/models/user')
-var id = '5c055e8b5be28c0798e5746611';
+var id = '6c055e8b5be28c0798e57466';
 
 if(!ObjectID.ObjectId.isValid(id)){
      console.log('ID not valid')
@@ -24,13 +24,25 @@ todos.findById(id).then((todo) =>{
     console.log('find by id', todo)
 })
 */
+User.find({}).then((users) =>{
+    console.log("find() method ", users);
+})
+
+User.findOne({
+    _id:id
+}).then((user) =>{
+    if(!user){
+        return console.log("there is no user ");
+    }
+    console.log("findOne() method ", user);
+})
 
 User.findById(id)
     .then((user) =>{
         if(!user){
            return  console.log("unable to find the user")
         }else{
-            console.log('user', user);
+            console.log('findById() method', user);
         }
 
     })

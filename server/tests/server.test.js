@@ -9,7 +9,7 @@ const ObjectID = require('mongodb')
 const todoarr = [
     {
         _id: new ObjectID.ObjectId(),
-        text:"first chunk "
+        text:"first chunk"
     },{
         _id: new ObjectID.ObjectId(),
         text:"second chunk"
@@ -87,10 +87,11 @@ describe('GET/todos',() =>{
         .end(done)
     })
 })
-describe('GET/todos:id' ,() =>{
+describe('GET/todos/:id' ,() =>{
     it('should return todo doc',(done) =>{
+        var hexId = todoarr[0]._id.toHexString();
         request('http://localhost:3000')
-        .get(`/todos/${todoarr[0]._id.toHexString()}`)
+        .get(`/todos/${hexId}`)
         .expect(200)
         .expect((res) =>{
             expect(res.body.todo.text).toBe(todoarr[0].text)

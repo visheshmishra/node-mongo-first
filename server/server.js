@@ -5,6 +5,8 @@ const ObjectID = require('mongodb')
 const express = require('express');
 const  bodyParser = require('body-parser');
 
+const port = process.env.port || 3000;
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -58,7 +60,7 @@ app.get('/todos/:id',(req,res) =>{
    console.log(id);
     todos.findById(id).then((todo) =>{
         if(!todo){
-            return res.status(444).send(e);
+            return res.status(404).send(e);
         }
 
         res.send({todo})
@@ -67,8 +69,8 @@ app.get('/todos/:id',(req,res) =>{
     })
 })
 
-app.listen(3000,() =>{
-    console.log("app is listening at 3000");
+app.listen(port,() =>{
+    console.log(`app is listening at ${port}`);
 })
 
 module.exports = {app}
