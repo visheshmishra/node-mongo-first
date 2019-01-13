@@ -10,9 +10,12 @@ const todoarr = [
     {
         _id: new ObjectID.ObjectId(),
         text:"first chunk"
+
     },{
         _id: new ObjectID.ObjectId(),
-        text:"second chunk"
+        text:"second chunk",
+        completed:false,
+        completedAt: new Date().getTime()
     }
 ];
 
@@ -156,6 +159,47 @@ describe('Delete/todos/:id',() =>{
         request('http://localhost:3000')
         .delete('/todos/123')
         .expect(404)
+        .end(done)
+    })
+})
+
+describe('Patch/todos/:id',() =>{
+    it('should update todo doc',(done) => {
+        var hexid = todoarr[0]._id.toHexString();
+        var text = "there should be new text";
+        request('http://localhost:3000')
+        .patch(`/todos/${hexid}`)
+        .send({
+            completed:true,
+            text
+        })
+        .expect(200)
+        .expect((res) =>{
+            console.log(res.body);
+            expect(res.body.todo.text).toBe(text);
+            expect(res.body.todo.completed).toBe(true);
+            expect(res.body.todo.completedAt).toBeA('number');
+        })
+
+        .end(done)
+    })
+
+    it('should not update todo if completedAt false', (done) =>{
+        var hexid = todoarr[0]._id.toHexString();
+        var text = "there should be new text";
+        request('http://localhost:3000')
+        .patch(`/todos/${hexid}`)
+        .send({
+            completed:false,
+            text
+        })
+        .expect(200)
+        .expect((res) =>{
+            console.log(res.body);
+            expect(res.body.todo.text).toBe(text);
+            expect(res.body.todo.completed).toBe(false);
+            expect(res.body.todo.completedAt).toNotExist();
+        })
         .end(done)
     })
 })
