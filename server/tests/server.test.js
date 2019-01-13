@@ -116,3 +116,46 @@ describe('GET/todos/:id' ,() =>{
         .end(done)
     })
 })
+
+describe('Delete/todos/:id',() =>{
+    it('should delete todo doc',(done) => {
+        var hexid = todoarr[0]._id.toHexString();
+        request('http://localhost:3000')
+        .delete(`/todos/${hexid}`)
+        .expect(200)
+        .expect((res) =>{
+            console.log(res.body);
+            expect(res.body._id).toBe(hexid)
+        })
+
+        .end((err,res) =>{
+            if(err){
+                return done(err);
+            }
+
+            Todo.todos.findById(hexid).then((todo) =>{
+                expect(todo).toNotExist();
+                console.log(todo);
+                done();
+            }).catch((e) =>{
+                done(e);
+            })
+        })
+    })
+/*
+    it('should return 404 if todo not found', (done) =>{
+        var hexId = new ObjectID();
+        request('http://localhost:3000')
+        .delete(`/todos/rty`)
+        .expect(404)
+
+        .end(done)
+    })
+*/
+    it('should return 404 if wrong url', (done) =>{
+        request('http://localhost:3000')
+        .delete('/todos/123')
+        .expect(404)
+        .end(done)
+    })
+})
