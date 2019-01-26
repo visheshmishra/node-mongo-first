@@ -1,3 +1,4 @@
+require('./config/config');
 const {mongoose} = require('./db/mongoose');
 const {todos} = require('./models/todo');
 const {User} = require('./models/user');
@@ -114,6 +115,22 @@ app.patch('/todos/:id',(req,res) =>{
         }).catch((e) =>{
             res.status(404).send();
         })
+})
+
+app.post('/User',(req,res) =>{
+    var body = _.pick(req.body,["email","password"]);
+    var user = new User(body);
+    user.save().then(() =>{
+        debugger;
+       return user.generateAuthToken();
+        
+    }).then((token) =>{
+        debugger;
+        res.header('x-auth',token).send(user);
+    }).catch((e) =>{
+        res.status(404).send(e);
+        console.log(e);
+    })
 })
 
 app.listen(port,() =>{
