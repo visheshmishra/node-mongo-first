@@ -17,32 +17,35 @@ var UserSchema = new mongoose.Schema({
     password:{
         type:String,
         minlength:6,
-        required:true,
-        tokens:{
-            access:{
-                type:String,
-                required:true
-            },
-            token:{
-                type:String,
-                required:true
-            }
+        required:true
+    },
+    tokens:{
+        access:{
+            type:String,
+            required:true
+        },
+        token:{
+            type:String,
+            required:true
         }
     }
 })
-var User = mongoose.model('User',UserSchema);
+
 UserSchema.methods.generateAuthToken = function(){
+    debugger;
     var user = this;
     var access = 'auth';
-    var token = jwt.sign({_id:user.id.toHexString(),access},'abc123').toString();
+    var token = jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
     console.log("token achieved");
     console.log(token);
-   // user.tokens.push({access,token});
-   user.tokens = user.tokens.concat([{access,token}]);
+    user.tokens.push({access,token});
+   //user.tokens = user.tokens.concat([{access,token}]);
 
     return user.save().then(() =>{
         return token;
     })
 }
+
+var User = mongoose.model('users',UserSchema);
 
 module.exports ={User}
