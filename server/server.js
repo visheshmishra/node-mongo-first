@@ -169,6 +169,16 @@ app.post('/User/login',(req,res) =>{
     })
 })
 
+app.delete('/User/me/token', authenticate,(req,res) =>{
+    debugger;
+   req.user.removeToken(req.token).then(()=>{
+        res.status(200).send();
+    },(e)=>{
+        console.log(e);
+        res.status(400).send();
+    }) ;
+})
+
 app.listen(port,() =>{
     console.log(`app is listening at ${port}`);
 })

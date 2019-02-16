@@ -111,6 +111,15 @@ UserSchema.statics.findByCredentials = function(email, password){
     })
 }
 
+UserSchema.methods.removeToken = function(token){
+    debugger;
+    var user = this;
+    return user.updateOne(
+        { email: "visheshmishra16@gmail.com" },
+    { $unset: { token: "" } }
+    )
+}
+
 var User = mongoose.model('users',UserSchema);
 
 module.exports ={User}
