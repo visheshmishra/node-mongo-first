@@ -6,6 +6,7 @@ const ObjectID = require('mongodb')
 const express = require('express');
 const  bodyParser = require('body-parser');
 const _ = require("lodash");
+var {authenticate} =  require('./middleware/authenticate');
 
 const port = process.env.PORT || 3000;
 
@@ -119,6 +120,7 @@ app.patch('/todos/:id',(req,res) =>{
 
 app.post('/User',(req,res) =>{
     var body = _.pick(req.body,["email","password"]);
+    debugger;
     var user = new User(body);
     user.save().then((user) =>{
         debugger;
@@ -131,6 +133,28 @@ app.post('/User',(req,res) =>{
         res.status(404).send(e);
         console.log(e);
     })
+})
+/*
+var authenticate = (req,res,next) =>{
+    var token = req.header('x-auth');
+    debugger;
+    User.findByToken(token).then((user) =>{
+        console.log(user);
+        if(!user){
+            return Promise.reject();
+        }
+
+        req.user = user;
+        req.token = token;
+        next();
+    }).catch((e) =>{
+        res.status(401).send();
+    })
+}
+*/
+app.get('/User/me', authenticate, (req,res) =>{
+    console.log(req);
+    res.send(req.user);
 })
 
 app.listen(port,() =>{
